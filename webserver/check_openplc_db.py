@@ -10,7 +10,7 @@ from sqlite3 import Error
 import os
 
 builddir = r"build/"
-dbfile = r"build/openplc.db"
+dbfile = r"build/zcplc.db"
 
 createTablePrograms = r"""CREATE TABLE `Programs` (
     `Prog_ID`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -64,7 +64,7 @@ createTableUsers = r"""CREATE TABLE "Users" (
     `pict_file`	TEXT
 )"""
 
-insertDefaultUser = r"INSERT INTO Users VALUES (10, 'OpenPLC User', 'openplc', 'openplc@openplc.com','openplc', NULL)"
+insertDefaultUser = r"INSERT INTO Users VALUES (10, 'zcPLC User', 'zcplc', 'zcplc@zcplc.com','zcplc', NULL)"
 
 
 

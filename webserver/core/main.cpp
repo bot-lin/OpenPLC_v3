@@ -1,24 +1,26 @@
 //-----------------------------------------------------------------------------
 // Copyright 2018 Thiago Alves
-// This file is part of the OpenPLC Runtime.
+// Modified for zcPLC
+// This file is part of the zcPLC Runtime.
 //
-// OpenPLC is free software: you can redistribute it and/or modify
+// zcPLC is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// OpenPLC is distributed in the hope that it will be useful,
+// zcPLC is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with OpenPLC.  If not, see <http://www.gnu.org/licenses/>.
+// along with zcPLC.  If not, see <http://www.gnu.org/licenses/>.
 //------
 //
-// This is the main file for the OpenPLC. It contains the initialization
+// This is the main file for the zcPLC. It contains the initialization
 // procedures for the hardware, network and the main loop
 // Thiago Alves, Jun 2018
+// Modified for zcPLC
 //-----------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -46,7 +48,7 @@ IEC_BOOL __DEBUG;
 
 unsigned long __tick = 0;
 pthread_mutex_t bufferLock; //mutex for the internal buffers
-uint8_t run_openplc = 1; //Variable to control OpenPLC Runtime execution
+uint8_t run_openplc = 1; //Variable to control zcPLC Runtime execution
 
 // pointers to IO *array[const][const] from cpp to c and back again don't work as expected, so instead callbacks
 uint8_t *bool_input_call_back(int a, int b){ return bool_input[a][b]; }
@@ -74,7 +76,7 @@ int main(int argc,char **argv)
     latency_total = 0;
 
     char log_msg[1000];
-    sprintf(log_msg, "OpenPLC Runtime starting...\n");
+    sprintf(log_msg, "zcPLC Runtime starting...\n");
     log(log_msg);
 
     //======================================================
@@ -257,6 +259,6 @@ int main(int argc,char **argv)
     disableOutputs();
     updateBuffersOut();
     finalizeHardware();
-    printf("Shutting down OpenPLC Runtime...\n");
+    printf("Shutting down zcPLC Runtime...\n");
     exit(0);
 }
