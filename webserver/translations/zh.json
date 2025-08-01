@@ -1,0 +1,138 @@
+{
+  "app_name": "zcPLC",
+  "app_version": "zcPLC 运行时 v3.0",
+  "app_description": "工业自动化控制器",
+  
+  "login": "登录",
+  "username": "用户名",
+  "password": "密码",
+  "welcome": "欢迎使用 zcPLC",
+  "logout": "退出登录",
+  
+  "navigation": {
+    "dashboard": "仪表板",
+    "programs": "程序管理",
+    "monitoring": "系统监控",
+    "slave_devices": "从站设备",
+    "modbus": "Modbus配置",
+    "settings": "系统设置",
+    "users": "用户管理",
+    "hardware": "硬件配置"
+  },
+  
+  "dashboard": {
+    "title": "zcPLC 仪表板",
+    "runtime_status": "运行时状态",
+    "running": "运行中",
+    "stopped": "已停止",
+    "start_plc": "启动PLC",
+    "stop_plc": "停止PLC",
+    "system_info": "系统信息",
+    "cpu_usage": "CPU使用率",
+    "memory_usage": "内存使用率",
+    "uptime": "运行时间"
+  },
+  
+  "programs": {
+    "title": "程序管理",
+    "upload_program": "上传程序",
+    "compile_program": "编译程序",
+    "active_program": "当前程序",
+    "program_list": "程序列表",
+    "no_program": "未加载程序",
+    "upload_success": "程序上传成功",
+    "compile_success": "程序编译成功",
+    "compile_error": "编译失败"
+  },
+  
+  "monitoring": {
+    "title": "系统监控",
+    "real_time_data": "实时数据",
+    "input_variables": "输入变量",
+    "output_variables": "输出变量",
+    "refresh": "刷新",
+    "auto_refresh": "自动刷新"
+  },
+  
+  "slave_devices": {
+    "title": "从站设备管理",
+    "add_device": "添加设备",
+    "device_name": "设备名称",
+    "device_type": "设备类型",
+    "slave_id": "从站ID",
+    "ip_address": "IP地址",
+    "port": "端口",
+    "serial_port": "串行端口",
+    "baud_rate": "波特率",
+    "parity": "校验位",
+    "data_bits": "数据位",
+    "stop_bits": "停止位",
+    "save": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "delete": "删除",
+    "status": "状态",
+    "connected": "已连接",
+    "disconnected": "已断开"
+  },
+  
+  "modbus": {
+    "title": "Modbus配置",
+    "tcp_server": "TCP服务器",
+    "rtu_master": "RTU主站",
+    "enable": "启用",
+    "disable": "禁用",
+    "port_number": "端口号",
+    "timeout": "超时时间",
+    "polling_period": "轮询周期"
+  },
+  
+  "settings": {
+    "title": "系统设置",
+    "language": "语言",
+    "timezone": "时区",
+    "date_format": "日期格式",
+    "logs": "系统日志",
+    "backup": "备份",
+    "restore": "恢复"
+  },
+  
+  "hardware": {
+    "title": "硬件配置",
+    "platform": "平台",
+    "gpio_pins": "GPIO引脚",
+    "analog_inputs": "模拟输入",
+    "digital_inputs": "数字输入",
+    "digital_outputs": "数字输出"
+  },
+  
+  "messages": {
+    "login_instruction": "请使用您的凭据登录",
+    "save_success": "设置保存成功",
+    "save_error": "设置保存失败",
+    "confirm_delete": "确定要删除此项目吗？",
+    "operation_success": "操作成功完成",
+    "operation_failed": "操作失败",
+    "connection_error": "连接错误",
+    "timeout_error": "操作超时",
+    "invalid_input": "输入无效",
+    "required_field": "此字段为必填项"
+  },
+  
+  "time": {
+    "seconds": "秒",
+    "minutes": "分钟",
+    "hours": "小时",
+    "days": "天"
+  },
+  
+  "units": {
+    "ms": "毫秒",
+    "hz": "赫兹",
+    "percent": "%",
+    "bytes": "字节",
+    "kb": "KB",
+    "mb": "MB",
+    "gb": "GB"
+  }
+}

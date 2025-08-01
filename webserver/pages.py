@@ -1,6 +1,6 @@
 login_head = """
 <!DOCTYPE html>
-<html>
+<html lang="{{ current_language() }}">
     <style>
         @import url(https://fonts.googleapis.com/css?family=Roboto:300);
         .top {
@@ -124,17 +124,23 @@ login_head = """
             <div class='login-page'>
               <div class='form'>
                 <form action='login' method='POST' class='login-form'>
-                    <h3 style=\"font-family:'Roboto', sans-serif; font-size:24px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px\"><center><b>Welcome to OpenPLC</b></center></h3>"""
+                    <h3 style=\"font-family:'Roboto', sans-serif; font-size:24px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px\"><center><b>{{ _('welcome') }}</b></center></h3>"""
 
 login_body = """
-                    <h3 style=\"font-family:'Roboto', sans-serif; font-size:14px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px\"><center>Use your credentials to login</center></h3>
-                    <input type='text' name='username' id='username' placeholder='username'/>
-                    <input type='password' name='password' id='password' placeholder='password'/>
+                    <h3 style=\"font-family:'Roboto', sans-serif; font-size:14px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px\"><center>{{ _('messages.login_instruction') }}</center></h3>
+                    <input type='text' name='username' id='username' placeholder='{{ _("username") }}'/>
+                    <input type='password' name='password' id='password' placeholder='{{ _("password") }}'/>
                     <br><br><br>
-                    <button>login</button>
+                    <button>{{ _('login') }}</button>
                 </form>
               </div>
-              <h3 style="font-family:'roboto', sans-serif; font-size:14px; color:#ffffff;">Release: 2025-03-31</h3>
+              <!-- Language Switcher -->
+              <div style="text-align: center; margin: 20px 0;">
+                <a href="/set_language/en" style="color: #ffffff; text-decoration: none; margin: 0 10px; font-size: 12px;">English</a>
+                <span style="color: #ffffff;">|</span>
+                <a href="/set_language/zh" style="color: #ffffff; text-decoration: none; margin: 0 10px; font-size: 12px;">中文</a>
+              </div>
+              <h3 style="font-family:'roboto', sans-serif; font-size:14px; color:#ffffff;">zcPLC Release: 2025-03-31</h3>
             </div>
         </div>
     </body>
