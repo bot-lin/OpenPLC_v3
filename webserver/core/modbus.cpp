@@ -2,23 +2,23 @@
 // Copyright 2015 Thiago Alves
 //
 // Based on the LDmicro software by Jonathan Westhues
-// This file is part of the OpenPLC Software Stack.
+// This file is part of the zcPLC Software Stack.
 //
-// OpenPLC is free software: you can redistribute it and/or modify
+// zcPLC is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// OpenPLC is distributed in the hope that it will be useful,
+// zcPLC is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with OpenPLC.  If not, see <http://www.gnu.org/licenses/>.
+// along with zcPLC.  If not, see <http://www.gnu.org/licenses/>.
 //------
 //
-// This file has all the MODBUS/TCP functions supported by the OpenPLC. If any
+// This file has all the MODBUS/TCP functions supported by the zcPLC. If any
 // other function is to be added to the project, it must be added here
 // Thiago Alves, Dec 2015
 //-----------------------------------------------------------------------------
@@ -114,7 +114,7 @@ int word(unsigned char byte1, unsigned char byte2)
 }
 
 //-----------------------------------------------------------------------------
-// This function sets the internal NULL OpenPLC buffers to point to valid
+// This function sets the internal NULL zcPLC buffers to point to valid
 // positions on the Modbus buffer
 //-----------------------------------------------------------------------------
 void mapUnusedIO()
