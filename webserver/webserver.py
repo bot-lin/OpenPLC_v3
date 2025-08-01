@@ -9,7 +9,6 @@ import datetime
 import time
 import pages
 import zcplc as openplc
-from i18n import init_i18n, i18n, _
 import monitoring as monitor
 import sys
 import ctypes
@@ -23,9 +22,6 @@ app = flask.Flask(__name__)
 app.secret_key = str(os.urandom(16))
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-
-# Initialize internationalization
-init_i18n(app)
 
 zcplc_runtime = openplc.runtime()
 
@@ -2443,15 +2439,6 @@ def logout():
 def unauthorized_handler():
     return 'Unauthorized'
 
-#----------------------------------------------------------------------------
-# Language switching route
-#----------------------------------------------------------------------------
-@app.route('/set_language/<language>')
-def set_language(language):
-    i18n.set_language(language)
-    # Redirect back to the referring page or dashboard
-    return flask.redirect(flask.request.referrer or flask.url_for('dashboard'))
-    
 #----------------------------------------------------------------------------
 #Creates a connection with the SQLite database.
 #----------------------------------------------------------------------------
