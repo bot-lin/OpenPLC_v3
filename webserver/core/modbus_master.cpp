@@ -672,9 +672,17 @@ void *querySlaveDevices(void *arg)
 void initializeMB()
 {
     parseConfig();
+    
+    char log_msg[1000];
+    sprintf(log_msg, "Initializing Modbus Master - Found %d devices in configuration\n", num_devices);
+    log(log_msg);
 
     for (int i = 0; i < num_devices; i++)
     {
+        sprintf(log_msg, "Initializing device %d: %s (slave %d) on %s\n", 
+                i, mb_devices[i].dev_name, mb_devices[i].dev_id, mb_devices[i].dev_address);
+        log(log_msg);
+        
         if (mb_devices[i].protocol == MB_TCP)
         {
             mb_devices[i].mb_ctx = modbus_new_tcp(mb_devices[i].dev_address, mb_devices[i].ip_port);
@@ -693,17 +701,25 @@ void initializeMB()
             }
             if (share_index != -1)
             {
+                sprintf(log_msg, "Device %s (slave %d) sharing RTU port %s with device %s (slave %d)\n", 
+                        mb_devices[i].dev_name, mb_devices[i].dev_id, mb_devices[i].dev_address,
+                        mb_devices[share_index].dev_name, mb_devices[share_index].dev_id);
+                log(log_msg);
+                
                 if (mb_devices[i].rtu_baud != mb_devices[share_index].rtu_baud || mb_devices[i].rtu_parity != mb_devices[share_index].rtu_parity || 
                     mb_devices[i].rtu_data_bit != mb_devices[share_index].rtu_data_bit || mb_devices[i].rtu_stop_bit != mb_devices[share_index].rtu_stop_bit)
                 {
-                    char log_msg[1000];
-                    sprintf(log_msg, "Warning MB device %s port setting missmatch\n", mb_devices[i].dev_name);
+                    sprintf(log_msg, "Warning MB device %s port setting mismatch with shared port\n", mb_devices[i].dev_name);
                     log(log_msg);
                 }
                 mb_devices[i].mb_ctx = mb_devices[share_index].mb_ctx;
             }
             else
             {
+                sprintf(log_msg, "Creating new RTU context for device %s (slave %d) on port %s\n", 
+                        mb_devices[i].dev_name, mb_devices[i].dev_id, mb_devices[i].dev_address);
+                log(log_msg);
+                
                 mb_devices[i].mb_ctx = modbus_new_rtu(mb_devices[i].dev_address, mb_devices[i].rtu_baud,
                                                 mb_devices[i].rtu_parity, mb_devices[i].rtu_data_bit,
                                                 mb_devices[i].rtu_stop_bit);
