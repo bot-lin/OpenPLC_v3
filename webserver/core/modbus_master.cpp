@@ -367,23 +367,30 @@ void *querySlaveDevices(void *arg)
             //Check if there is a connected RTU device using the same port
             bool found_sharing = false;
             bool rtu_port_connected = false;
+            int sharing_devices = 0;
             if (mb_devices[i].protocol == MB_RTU)
             {
+                //Count ALL devices (including this one) on the same port
                 for (int a = 0; a < num_devices; a++)
                 {
-                    if (a != i && !strcmp(mb_devices[i].dev_address, mb_devices[a].dev_address))
+                    if (!strcmp(mb_devices[i].dev_address, mb_devices[a].dev_address))
                     {
-                        found_sharing = true;
-                        if (mb_devices[a].isConnected)
+                        sharing_devices++;
+                        if (a != i && mb_devices[a].isConnected)
                         {
                             rtu_port_connected = true;
                         }
                     }
                 }
+                //Port is shared if more than 1 device uses it
+                found_sharing = (sharing_devices > 1);
+                
                 if (found_sharing)
                 {
                     //Must reset mb context to current device's slave id
                     modbus_set_slave(mb_devices[i].mb_ctx, mb_devices[i].dev_id);
+                    //Add critical inter-slave timing delay
+                    sleepms(10);
                 }
             }
 
@@ -394,11 +401,18 @@ void *querySlaveDevices(void *arg)
                 log(log_msg);
                 if (modbus_connect(mb_devices[i].mb_ctx) == -1)
                 {
-
                     sprintf(log_msg, "Connection failed on MB device %s: %s\n", mb_devices[i].dev_name, modbus_strerror(errno));
                     log(log_msg);
                     
                     if (special_functions[2] != NULL) *special_functions[2]++;
+                    
+                    //For RTU devices sharing a port, individual connection failure doesn't mean port is down
+                    if (mb_devices[i].protocol == MB_RTU && found_sharing)
+                    {
+                        sprintf(log_msg, "RTU slave %d on port %s may be unresponsive, continuing with other slaves\n", 
+                                mb_devices[i].dev_id, mb_devices[i].dev_address);
+                        log(log_msg);
+                    }
                     
                     // Because this device is not connected, we skip those input registers
                     bool_input_index += (mb_devices[i].discrete_inputs.num_regs);
@@ -409,9 +423,23 @@ void *querySlaveDevices(void *arg)
                 }
                 else
                 {
-                    sprintf(log_msg, "Connected to MB device %s\n", mb_devices[i].dev_name);
+                    sprintf(log_msg, "Connected to MB device %s (slave %d) on port %s\n", 
+                            mb_devices[i].dev_name, mb_devices[i].dev_id, mb_devices[i].dev_address);
                     log(log_msg);
                     mb_devices[i].isConnected = true;
+                    
+                    //For RTU port sharing, mark all other devices on this port as potentially connected
+                    if (mb_devices[i].protocol == MB_RTU && found_sharing)
+                    {
+                        for (int a = 0; a < num_devices; a++)
+                        {
+                            if (a != i && !strcmp(mb_devices[i].dev_address, mb_devices[a].dev_address))
+                            {
+                                //Don't override existing connections, but enable communication attempts
+                                rtu_port_connected = true;
+                            }
+                        }
+                    }
                 }
             }
             if (mb_devices[i].isConnected || (mb_devices[i].protocol == MB_RTU && rtu_port_connected))
@@ -437,6 +465,10 @@ void *querySlaveDevices(void *arg)
                 if (mb_devices[i].discrete_inputs.num_regs != 0)
                 {
                     sleepms(mb_devices[i].rtu_tx_pause);
+                    //Additional delay for multi-slave RTU communication
+                    if (mb_devices[i].protocol == MB_RTU && found_sharing) {
+                        sleepms(5);
+                    }
                     uint8_t *tempBuff;
                     tempBuff = (uint8_t *)malloc(mb_devices[i].discrete_inputs.num_regs);
                     nanosleep(&ts, NULL); 
@@ -450,7 +482,8 @@ void *querySlaveDevices(void *arg)
                             mb_devices[i].isConnected = false;
                         }
                         
-                        sprintf(log_msg, "Modbus Read Discrete Input Registers failed on MB device %s: %s\n", mb_devices[i].dev_name, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Read Discrete Input Registers failed on MB device %s (slave %d): %s\n", 
+                                mb_devices[i].dev_name, mb_devices[i].dev_id, modbus_strerror(errno));
                         log(log_msg);
                         bool_input_index += (mb_devices[i].discrete_inputs.num_regs);
                         if (special_functions[2] != NULL) *special_functions[2]++;
@@ -473,6 +506,10 @@ void *querySlaveDevices(void *arg)
                 if (mb_devices[i].coils.num_regs != 0)
                 {
                     sleepms(mb_devices[i].rtu_tx_pause);
+                    //Additional delay for multi-slave RTU communication
+                    if (mb_devices[i].protocol == MB_RTU && found_sharing) {
+                        sleepms(5);
+                    }
                     uint8_t *tempBuff;
                     tempBuff = (uint8_t *)malloc(mb_devices[i].coils.num_regs);
 
@@ -494,7 +531,8 @@ void *querySlaveDevices(void *arg)
                             mb_devices[i].isConnected = false;
                         }
 
-                        sprintf(log_msg, "Modbus Write Coils failed on MB device %s: %s\n", mb_devices[i].dev_name, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Write Coils failed on MB device %s (slave %d): %s\n", 
+                                mb_devices[i].dev_name, mb_devices[i].dev_id, modbus_strerror(errno));
                         log(log_msg);
                         if (special_functions[2] != NULL) *special_functions[2]++;
                     }
@@ -506,6 +544,10 @@ void *querySlaveDevices(void *arg)
                 if (mb_devices[i].input_registers.num_regs != 0)
                 {
                     sleepms(mb_devices[i].rtu_tx_pause);
+                    //Additional delay for multi-slave RTU communication
+                    if (mb_devices[i].protocol == MB_RTU && found_sharing) {
+                        sleepms(5);
+                    }
                     uint16_t *tempBuff;
                     tempBuff = (uint16_t *)malloc(2*mb_devices[i].input_registers.num_regs);
                     nanosleep(&ts, NULL); 
@@ -519,7 +561,8 @@ void *querySlaveDevices(void *arg)
                             mb_devices[i].isConnected = false;
                         }
                         
-                        sprintf(log_msg, "Modbus Read Input Registers failed on MB device %s: %s\n", mb_devices[i].dev_name, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Read Input Registers failed on MB device %s (slave %d): %s\n", 
+                                mb_devices[i].dev_name, mb_devices[i].dev_id, modbus_strerror(errno));
                         log(log_msg);
                         int_input_index += (mb_devices[i].input_registers.num_regs);
                         if (special_functions[2] != NULL) *special_functions[2]++;
@@ -542,6 +585,10 @@ void *querySlaveDevices(void *arg)
                 if (mb_devices[i].holding_read_registers.num_regs != 0)
                 {
                     sleepms(mb_devices[i].rtu_tx_pause);
+                    //Additional delay for multi-slave RTU communication
+                    if (mb_devices[i].protocol == MB_RTU && found_sharing) {
+                        sleepms(5);
+                    }
                     uint16_t *tempBuff;
                     tempBuff = (uint16_t *)malloc(2*mb_devices[i].holding_read_registers.num_regs);
                     nanosleep(&ts, NULL); 
@@ -554,7 +601,8 @@ void *querySlaveDevices(void *arg)
                             modbus_close(mb_devices[i].mb_ctx);
                             mb_devices[i].isConnected = false;
                         }
-                        sprintf(log_msg, "Modbus Read Holding Registers failed on MB device %s: %s\n", mb_devices[i].dev_name, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Read Holding Registers failed on MB device %s (slave %d): %s\n", 
+                                mb_devices[i].dev_name, mb_devices[i].dev_id, modbus_strerror(errno));
                         log(log_msg);
                         int_input_index += (mb_devices[i].holding_read_registers.num_regs);
                         if (special_functions[2] != NULL) *special_functions[2]++;
@@ -577,6 +625,10 @@ void *querySlaveDevices(void *arg)
                 if (mb_devices[i].holding_registers.num_regs != 0)
                 {
                     sleepms(mb_devices[i].rtu_tx_pause);
+                    //Additional delay for multi-slave RTU communication
+                    if (mb_devices[i].protocol == MB_RTU && found_sharing) {
+                        sleepms(5);
+                    }
                     uint16_t *tempBuff;
                     tempBuff = (uint16_t *)malloc(2*mb_devices[i].holding_registers.num_regs);
 
@@ -599,7 +651,8 @@ void *querySlaveDevices(void *arg)
                             mb_devices[i].isConnected = false;
                         }
                         
-                        sprintf(log_msg, "Modbus Write Holding Registers failed on MB device %s: %s\n", mb_devices[i].dev_name, modbus_strerror(errno));
+                        sprintf(log_msg, "Modbus Write Holding Registers failed on MB device %s (slave %d): %s\n", 
+                                mb_devices[i].dev_name, mb_devices[i].dev_id, modbus_strerror(errno));
                         log(log_msg);
                         if (special_functions[2] != NULL) *special_functions[2]++;
                     }
