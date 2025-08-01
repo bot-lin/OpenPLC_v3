@@ -7,9 +7,9 @@ fi
 #move into the scripts folder if you're not there already
 cd scripts &>/dev/null
 
-OPENPLC_PLATFORM=$(cat zcplc_platform)
+OPENPLC_PLATFORM=$(cat openplc_platform)
 ETHERCAT_OPT=$(cat ethercat)
-OPENPLC_DRIVER=$(cat zcplc_driver)
+OPENPLC_DRIVER=$(cat openplc_driver)
 
 #store the active program filename
 echo "$1" > ../active_program
@@ -68,7 +68,7 @@ if [ "$OPENPLC_PLATFORM" = "win" ]; then
     echo "Generating glueVars..."
     ./glue_generator
     echo "Compiling main program..."
-    g++ *.cpp *.o -o zcplc -I ./lib -pthread -fpermissive -I /usr/local/include/modbus -L /usr/local/lib snap7.lib -lmodbus -w 
+    g++ *.cpp *.o -o openplc -I ./lib -pthread -fpermissive -I /usr/local/include/modbus -L /usr/local/lib snap7.lib -lmodbus -w 
     if [ $? -ne 0 ]; then
         echo "Error compiling C files"
         echo "Compilation finished with errors!"
@@ -104,9 +104,9 @@ elif [ "$OPENPLC_PLATFORM" = "linux" ]; then
     ./glue_generator
     echo "Compiling main program..."
     if [ "$OPENPLC_DRIVER" = "sl_rp4" ]; then
-        g++ -std=gnu++11 *.cpp *.o -o zcplc -I ./lib -pthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w $ETHERCAT_INC -DSL_RP4
+        g++ -std=gnu++11 *.cpp *.o -o openplc -I ./lib -pthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w $ETHERCAT_INC -DSL_RP4
     else
-        g++ -std=gnu++11 *.cpp *.o -o zcplc -I ./lib -pthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w $ETHERCAT_INC 
+        g++ -std=gnu++11 *.cpp *.o -o openplc -I ./lib -pthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w $ETHERCAT_INC 
     fi
     if [ $? -ne 0 ]; then
         echo "Error compiling C files"
@@ -143,9 +143,9 @@ elif [ "$OPENPLC_PLATFORM" = "rpi" ]; then
     ./glue_generator
     echo "Compiling main program..."
     if [ "$OPENPLC_DRIVER" = "sequent" ]; then
-        g++ -DSEQUENT -std=gnu++11 *.cpp *.o -o zcplc -I ./lib -lrt -lwiringPi -lpthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w 
+        g++ -DSEQUENT -std=gnu++11 *.cpp *.o -o openplc -I ./lib -lrt -lwiringPi -lpthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w 
     else
-        g++ -std=gnu++11 *.cpp *.o -o zcplc -I ./lib -lrt -lwiringPi -lpthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w
+        g++ -std=gnu++11 *.cpp *.o -o openplc -I ./lib -lrt -lwiringPi -lpthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w
     fi
     if [ $? -ne 0 ]; then
         echo "Error compiling C files"
@@ -174,7 +174,7 @@ elif [ "$OPENPLC_PLATFORM" = "opi" ]; then
     echo "Generating glueVars..."
     ./glue_generator
     echo "Compiling main program..."
-    g++ -std=gnu++11 *.cpp *.o -o zcplc -I ./lib -lrt -lpthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w $WIRINGOP_INC
+    g++ -std=gnu++11 *.cpp *.o -o openplc -I ./lib -lrt -lpthread -fpermissive `pkg-config --cflags --libs libmodbus` -lsnap7 -lasiodnp3 -lasiopal -lopendnp3 -lopenpal -w $WIRINGOP_INC
     if [ $? -ne 0 ]; then
         echo "Error compiling C files"
         echo "Compilation finished with errors!"
@@ -184,7 +184,7 @@ elif [ "$OPENPLC_PLATFORM" = "opi" ]; then
     exit 0
 
 else
-    echo "Error: Undefined platform! zcPLC can only compile for Windows, Linux and Raspberry Pi environments"
+    echo "Error: Undefined platform! OpenPLC can only compile for Windows, Linux and Raspberry Pi environments"
     echo "Compilation finished with errors!"
     exit 1
 fi

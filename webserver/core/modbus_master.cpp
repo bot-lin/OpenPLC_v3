@@ -2,24 +2,24 @@
 // Copyright 2015 Thiago Alves
 //
 // Based on the LDmicro software by Jonathan Westhues
-// This file is part of the zcPLC Software Stack.
+// This file is part of the OpenPLC Software Stack.
 //
-// zcPLC is free software: you can redistribute it and/or modify
+// OpenPLC is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// zcPLC is distributed in the hope that it will be useful,
+// OpenPLC is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with zcPLC.  If not, see <http://www.gnu.org/licenses/>.
+// along with OpenPLC.  If not, see <http://www.gnu.org/licenses/>.
 //------
 //
 // This file is responsible for parse and discovery of slave devices by parsing
-// the mbconfig.cfg file. This code also updates zcPLC internal buffers with
+// the mbconfig.cfg file. This code also updates OpenPLC internal buffers with
 // the data queried from the slave devices.
 // Thiago Alves, Jul 2018
 //-----------------------------------------------------------------------------
@@ -666,7 +666,7 @@ void *querySlaveDevices(void *arg)
 }
 
 //-----------------------------------------------------------------------------
-// This function is called by the main zcPLC routine when it is initializing.
+// This function is called by the main OpenPLC routine when it is initializing.
 // Modbus master initialization procedures are here.
 //-----------------------------------------------------------------------------
 void initializeMB()
@@ -761,7 +761,7 @@ void initializeMB()
 }
 
 //-----------------------------------------------------------------------------
-// This function is called by the zcPLC in a loop. Here the internal buffers
+// This function is called by the OpenPLC in a loop. Here the internal buffers
 // must be updated to reflect the actual Input state.
 //-----------------------------------------------------------------------------
 void updateBuffersIn_MB()
@@ -779,7 +779,7 @@ void updateBuffersIn_MB()
 
 
 //-----------------------------------------------------------------------------
-// This function is called by the zcPLC in a loop. Here the internal buffers
+// This function is called by the OpenPLC in a loop. Here the internal buffers
 // must be updated to reflect the actual Output state.
 //-----------------------------------------------------------------------------
 void updateBuffersOut_MB()

@@ -2,24 +2,24 @@
 // Copyright 2015 Thiago Alves
 //
 // Based on the LDmicro software by Jonathan Westhues
-// This file is part of the zcPLC Software Stack.
+// This file is part of the OpenPLC Software Stack.
 //
-// zcPLC is free software: you can redistribute it and/or modify
+// OpenPLC is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// zcPLC is distributed in the hope that it will be useful,
+// OpenPLC is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with zcPLC.  If not, see <http://www.gnu.org/licenses/>.
+// along with OpenPLC.  If not, see <http://www.gnu.org/licenses/>.
 //------
 //
 // This file is to be used in conjuction with OPLC_Compiler generated code.
-// It is the "glue" that holds all parts of the zcPLC together.
+// It is the "glue" that holds all parts of the OpenPLC together.
 // Thiago Alves, Oct 2015
 //-----------------------------------------------------------------------------
 

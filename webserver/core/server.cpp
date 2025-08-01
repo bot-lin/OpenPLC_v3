@@ -1,22 +1,22 @@
 //-----------------------------------------------------------------------------
 // Copyright 2015 Thiago Alves
-// This file is part of the zcPLC Software Stack.
+// This file is part of the OpenPLC Software Stack.
 //
-// zcPLC is free software: you can redistribute it and/or modify
+// OpenPLC is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// zcPLC is distributed in the hope that it will be useful,
+// OpenPLC is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with zcPLC.  If not, see <http://www.gnu.org/licenses/>.
+// along with OpenPLC.  If not, see <http://www.gnu.org/licenses/>.
 //------
 //
-// This is the file for the network routines of the zcPLC. It has procedures
+// This is the file for the network routines of the OpenPLC. It has procedures
 // to create a socket, bind it and start network communication.
 // Thiago Alves, Dec 2015
 //-----------------------------------------------------------------------------

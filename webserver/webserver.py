@@ -8,8 +8,7 @@ import random
 import datetime
 import time
 import pages
-import zcplc as openplc
-from i18n import init_i18n, i18n, _
+import openplc
 import monitoring as monitor
 import sys
 import ctypes
@@ -24,10 +23,7 @@ app.secret_key = str(os.urandom(16))
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
-# Initialize internationalization
-init_i18n(app)
-
-zcplc_runtime = openplc.runtime()
+openplc_runtime = openplc.runtime()
 
 class User(flask_login.UserMixin):
     pass
@@ -63,7 +59,7 @@ def is_allowed_file(file):
         return False
 
 def configure_runtime():
-    global zcplc_runtime
+    global openplc_runtime
     database = "openplc.db"
     conn = create_connection(database)
     if (conn != None):
@@ -79,38 +75,38 @@ def configure_runtime():
                 if (row[0] == "Modbus_port"):
                     if (row[1] != "disabled"):
                         print("Enabling Modbus on port " + str(int(row[1])))
-                        zcplc_runtime.start_modbus(int(row[1]))
+                        openplc_runtime.start_modbus(int(row[1]))
                     else:
                         print("Disabling Modbus")
-                        zcplc_runtime.stop_modbus()
+                        openplc_runtime.stop_modbus()
                 elif (row[0] == "Dnp3_port"):
                     if (row[1] != "disabled"):
                         print("Enabling DNP3 on port " + str(int(row[1])))
-                        zcplc_runtime.start_dnp3(int(row[1]))
+                        openplc_runtime.start_dnp3(int(row[1]))
                     else:
                         print("Disabling DNP3")
-                        zcplc_runtime.stop_dnp3()
+                        openplc_runtime.stop_dnp3()
                 elif (row[0] == "Enip_port"):
                     if (row[1] != "disabled"):
                         print("Enabling EtherNet/IP on port " + str(int(row[1])))
-                        zcplc_runtime.start_enip(int(row[1]))
+                        openplc_runtime.start_enip(int(row[1]))
                     else:
                         print("Disabling EtherNet/IP")
-                        zcplc_runtime.stop_enip()
+                        openplc_runtime.stop_enip()
                 elif (row[0] == "snap7"):
                     if (row[1] != "false"):
                         print("Enabling S7 Protocol")
-                        zcplc_runtime.start_snap7()
+                        openplc_runtime.start_snap7()
                     else:
                         print("Disabling S7 Protocol")
-                        zcplc_runtime.stop_snap7()
+                        openplc_runtime.stop_snap7()
                 elif (row[0] == "Pstorage_polling"):
                     if (row[1] != "disabled"):
                         print("Enabling Persistent Storage with polling rate of " + str(int(row[1])) + " seconds")
-                        zcplc_runtime.start_pstorage(int(row[1]))
+                        openplc_runtime.start_pstorage(int(row[1]))
                     else:
                         print("Disabling Persistent Storage")
-                        zcplc_runtime.stop_pstorage()
+                        openplc_runtime.stop_pstorage()
                         delete_persistent_file()
         except Error as e:
             print("error connecting to the database" + str(e))
@@ -206,16 +202,16 @@ def generate_mbconfig():
 
     
 def draw_top_div():
-    global zcplc_runtime
+    global openplc_runtime
     top_div = ("<div class='top'>"
-    "<img src='/static/logo-openplc.png' alt='zcPLC' style='width:63px;height:50px;padding:0px 0px 0px 10px;float:left'>")
+    "<img src='/static/logo-openplc.png' alt='OpenPLC' style='width:63px;height:50px;padding:0px 0px 0px 10px;float:left'>")
     
-    if (zcplc_runtime.status() == "Running"):
-        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: #02EE07'>Running: </span>" + zcplc_runtime.project_name + "</center></h3>"
-    elif (zcplc_runtime.status() == "Compiling"):
-        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Yellow'>Compiling: </span>" + zcplc_runtime.project_name + "</center></h3>"
+    if (openplc_runtime.status() == "Running"):
+        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: #02EE07'>Running: </span>" + openplc_runtime.project_name + "</center></h3>"
+    elif (openplc_runtime.status() == "Compiling"):
+        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Yellow'>Compiling: </span>" + openplc_runtime.project_name + "</center></h3>"
     else:
-        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Red'>Stopped: </span>" + zcplc_runtime.project_name + "</center></h3>"
+        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Red'>Stopped: </span>" + openplc_runtime.project_name + "</center></h3>"
     
     top_div += "<div class='user'><img src='"
     if (flask_login.current_user.pict_file == "None"):
@@ -231,9 +227,9 @@ def draw_top_div():
 
 
 def draw_status():
-    global zcplc_runtime
+    global openplc_runtime
     status_str = ""
-    if (zcplc_runtime.status() == "Running"):
+    if (openplc_runtime.status() == "Running"):
         status_str = "<center><h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:0px 0px 0px 0px;'>Status: <i>Running</i></span></center></h3>"
         status_str += "<a href='stop_plc' class='button' style='width: 210px; height: 53px; margin: 0px 20px 0px 20px;'><b>Stop PLC</b></a>"
     else:
@@ -507,26 +503,26 @@ def login():
 
 @app.route('/start_plc')
 def start_plc():
-    global zcplc_runtime
+    global openplc_runtime
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
         monitor.stop_monitor()
-        zcplc_runtime.start_runtime()
+        openplc_runtime.start_runtime()
         time.sleep(1)
         configure_runtime()
         monitor.cleanup()
-        monitor.parse_st(zcplc_runtime.project_file)
+        monitor.parse_st(openplc_runtime.project_file)
         return flask.redirect(flask.url_for('dashboard'))
 
 
 @app.route('/stop_plc')
 def stop_plc():
-    global zcplc_runtime
+    global openplc_runtime
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        zcplc_runtime.stop_runtime()
+        openplc_runtime.stop_runtime()
         time.sleep(1)
         monitor.stop_monitor()
         return flask.redirect(flask.url_for('dashboard'))
@@ -534,21 +530,21 @@ def stop_plc():
 
 @app.route('/runtime_logs')
 def runtime_logs():
-    global zcplc_runtime
+    global openplc_runtime
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        return zcplc_runtime.logs()
+        return openplc_runtime.logs()
 
 
 @app.route('/dashboard')
 def dashboard():
-    global zcplc_runtime
+    global openplc_runtime
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
         monitor.stop_monitor()
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         return_str = pages.w3_style + pages.dashboard_head + draw_top_div()
         return_str += """
             <div class='main'>
@@ -573,15 +569,15 @@ def dashboard():
                         <br>
                         <h2>Dashboard</h2>
                         <p style='font-family:'Roboto', sans-serif; font-size:16px'><b>Status: """
-        if (zcplc_runtime.status() == "Running"):
+        if (openplc_runtime.status() == "Running"):
             return_str += "<font color = '#02CC07'>Running</font></b></p>"
         else:
             return_str += "<font color = 'Red'>Stopped</font></b></p>"
             
-        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>Program:</b> " + zcplc_runtime.project_name + "</p>"
-        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>Description:</b> " + zcplc_runtime.project_description + "</p>"
-        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>File:</b> " + zcplc_runtime.project_file + "</p>"
-        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>Runtime:</b> " + zcplc_runtime.exec_time() + "</p>"
+        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>Program:</b> " + openplc_runtime.project_name + "</p>"
+        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>Description:</b> " + openplc_runtime.project_description + "</p>"
+        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>File:</b> " + openplc_runtime.project_file + "</p>"
+        return_str += "<p style='font-family:'Roboto', sans-serif; font-size:16px'><b>Runtime:</b> " + openplc_runtime.exec_time() + "</p>"
         
         return_str += pages.dashboard_tail
         
@@ -594,7 +590,7 @@ def programs():
         return flask.redirect(flask.url_for('login'))
     else:
         monitor.stop_monitor()
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         list_all = False
         if (flask.request.args.get('list_all') == '1'):
             list_all = True
@@ -621,7 +617,7 @@ def programs():
                 <div style="w3-container">
                     <br>
                     <h2>Programs</h2>
-                    <p>Here you can upload a new program to zcPLC or revert back to a previous uploaded program shown on the table.</p>
+                    <p>Here you can upload a new program to OpenPLC or revert back to a previous uploaded program shown on the table.</p>
                     <table>
                         <tr style='background-color: white'>
                             <th>Program Name</th><th>File</th><th>Date Uploaded</th>
@@ -676,7 +672,7 @@ def reload_program():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         prog_id = flask.request.args.get('table_id')
         return_str = pages.w3_style + pages.style + draw_top_div()
         return_str += """
@@ -737,7 +733,7 @@ def update_program():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         prog_id = flask.request.args.get('id')
         
         return_str = pages.w3_style + pages.style + draw_top_div()
@@ -788,7 +784,7 @@ def update_program_action():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if ('file' not in flask.request.files):
             return draw_blank_page() + "<h2>Error</h2><p>You need to select a file to be uploaded!<br><br>Use the back-arrow on your browser to return</p></div></div></div></body></html>"
         prog_file = flask.request.files['file']
@@ -824,7 +820,7 @@ def remove_program():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         prog_id = flask.request.args.get('id')
         database = "openplc.db"
         conn = create_connection(database)
@@ -849,7 +845,7 @@ def upload_program():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if ('file' not in flask.request.files):
             return draw_blank_page() + "<h2>Error</h2><p>You need to select a file to be uploaded!<br><br>Use the back-arrow on your browser to return</p></div></div></div></body></html>"
         prog_file = flask.request.files['file']
@@ -929,7 +925,7 @@ def upload_program_action():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         prog_name = flask.request.form['prog_name']
         prog_descr = flask.request.form['prog_descr']
         prog_file = flask.request.form['prog_file']
@@ -958,14 +954,14 @@ def upload_program_action():
 
 @app.route('/compile-program', methods=['GET', 'POST'])
 def compile_program():
-    global zcplc_runtime
+    global openplc_runtime
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         st_file = flask.request.args.get('file')
         
-        #load information about the program being compiled into the zcplc_runtime object
+        #load information about the program being compiled into the openplc_runtime object
         database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
@@ -973,9 +969,9 @@ def compile_program():
                 cur = conn.cursor()
                 cur.execute("SELECT * FROM Programs WHERE File=?", (st_file,))
                 row = cur.fetchone()
-                zcplc_runtime.project_name = str(row[1])
-                zcplc_runtime.project_description = str(row[2])
-                zcplc_runtime.project_file = str(row[3])
+                openplc_runtime.project_name = str(row[1])
+                openplc_runtime.project_description = str(row[2])
+                openplc_runtime.project_file = str(row[3])
                 cur.close()
                 conn.close()
             except Error as e:
@@ -984,7 +980,7 @@ def compile_program():
             print("error connecting to the database")
         
         delete_persistent_file()
-        zcplc_runtime.compile_program(st_file)
+        openplc_runtime.compile_program(st_file)
         
         return draw_compiling_page()
 
@@ -994,7 +990,7 @@ def compilation_logs():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        return zcplc_runtime.compilation_status()
+        return openplc_runtime.compilation_status()
 
 
 @app.route('/modbus', methods=['GET', 'POST'])
@@ -1003,7 +999,7 @@ def modbus():
         return flask.redirect(flask.url_for('login'))
     else:
         monitor.stop_monitor()
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         return_str = pages.w3_style + pages.style + draw_top_div()
         return_str += """
             <div class='main'>
@@ -1027,7 +1023,7 @@ def modbus():
                 <div style="w3-container">
                     <br>
                     <h2>Slave Devices</h2>
-                    <p>List of Slave devices attached to zcPLC.</p>
+                    <p>List of Slave devices attached to OpenPLC.</p>
                     <p><b>Attention:</b> Slave devices are attached to address 100 onward (i.e. %IX100.0, %IW100, %QX100.0, and %QW100)
                     <table>
                         <tr style='background-color: white'>
@@ -1110,7 +1106,7 @@ def add_modbus_device():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if (flask.request.method == 'GET'):
             return_str = pages.w3_style + pages.style + draw_top_div()
             return_str += """
@@ -1229,7 +1225,7 @@ def modbus_edit_device():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if (flask.request.method == 'GET'):
             dev_id = flask.request.args.get('table_id')
             return_str = pages.w3_style + pages.style + draw_top_div()
@@ -1404,7 +1400,7 @@ def delete_device():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         devid_db = flask.request.args.get('dev_id')
         database = "openplc.db"
         conn = create_connection(database)
@@ -1429,7 +1425,7 @@ def monitoring():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         return_str = pages.w3_style + pages.monitoring_head + draw_top_div()
         return_str += """
             <div class='main'>
@@ -1466,7 +1462,7 @@ def monitoring():
                                 <th>Point Name</th><th>Type</th><th>Location</th><th>Write</th><th>Value</th>
                             </tr>"""
         
-        if (zcplc_runtime.status() == "Running"):
+        if (openplc_runtime.status() == "Running"):
             #Check Modbus Server status
             modbus_enabled = False
             modbus_port_cfg = 502
@@ -1560,7 +1556,7 @@ def monitor_update():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        #if (zcplc_runtime.status() == "Compiling"): return 'zcPLC is compiling new code. Please wait'
+        #if (openplc_runtime.status() == "Compiling"): return 'OpenPLC is compiling new code. Please wait'
         return_str = """
                         <table>
                             <col width="50"><col width="10"><col width="10"><col width="10"><col width="100">
@@ -1568,7 +1564,7 @@ def monitor_update():
                                 <th>Point Name</th><th>Type</th><th>Location</th><th>Write</th><th>Value</th>
                             </tr>"""
         
-        #if (zcplc_runtime.status() == "Running"):
+        #if (openplc_runtime.status() == "Running"):
         if (True):
             mb_port_cfg = flask.request.args.get('mb_port')
             monitor.start_monitor(int(mb_port_cfg))
@@ -1619,7 +1615,7 @@ def point_info():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        #if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        #if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         point_id = flask.request.args.get('table_id')
         debug_data = monitor.debug_vars[int(point_id)]
         return_str = pages.w3_style + pages.settings_style + draw_top_div()
@@ -1696,7 +1692,7 @@ def point_update():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        #if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        #if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         point_id = flask.request.args.get('table_id')
         debug_data = monitor.debug_vars[int(point_id)]
         return_str = """
@@ -1734,7 +1730,7 @@ def hardware():
         return flask.redirect(flask.url_for('login'))
     else:
         monitor.stop_monitor()
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if (flask.request.method == 'GET'):
             with open('./scripts/openplc_driver') as f: current_driver = f.read().rstrip()
             return_str = pages.w3_style + pages.hardware_style + draw_top_div() + pages.hardware_head
@@ -1745,9 +1741,9 @@ def hardware():
                 <div style="w3-container">
                     <br>
                     <h2>Hardware</h2>
-                    <p>zcPLC controls inputs and outputs through a piece of code called hardware layer (also known as driver). Therefore, to properly handle the inputs and outputs of your board, you must select the appropriate hardware layer for it. The Blank hardware layer is the default option on zcPLC, which provides no support for native inputs and outputs.</p>
-                    <!-- <p>This section allows you to change the hardware layer used by zcPLC. It is also possible to augment the current hardware layer through the hardware layer code box. -->
-                    <p><b>zcPLC Hardware Layer</b><p>
+                    <p>OpenPLC controls inputs and outputs through a piece of code called hardware layer (also known as driver). Therefore, to properly handle the inputs and outputs of your board, you must select the appropriate hardware layer for it. The Blank hardware layer is the default option on OpenPLC, which provides no support for native inputs and outputs.</p>
+                    <!-- <p>This section allows you to change the hardware layer used by OpenPLC. It is also possible to augment the current hardware layer through the hardware layer code box. -->
+                    <p><b>OpenPLC Hardware Layer</b><p>
                     <form   id    = "uploadForm"
                         enctype   =  "multipart/form-data"
                         action    =  "hardware"
@@ -1794,8 +1790,8 @@ def hardware():
                         <br>
                         <br>
                         <div id="psm_code" style="visibility:hidden">
-                            <p><b>zcPLC Python SubModule (PSM)</b><p>
-                            <p>PSM is a powerful bridge that connects zcPLC core to Python. You can use PSM to write your own zcPLC driver in pure Python. See below for a sample driver that switches %IX0.0 every second</p>
+                            <p><b>OpenPLC Python SubModule (PSM)</b><p>
+                            <p>PSM is a powerful bridge that connects OpenPLC core to Python. You can use PSM to write your own OpenPLC driver in pure Python. See below for a sample driver that switches %IX0.0 every second</p>
                             <textarea wrap="off" spellcheck="false" name="custom_layer_code" id="custom_layer_code">"""
             with open('./core/psm/main.py') as f: return_str += f.read()
             return_str += pages.hardware_tail
@@ -1817,7 +1813,7 @@ def restore_custom_hardware():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         
         #Restore the original custom layer code
         with open('./core/psm/main.original') as f: original_code = f.read()
@@ -1831,7 +1827,7 @@ def users():
         return flask.redirect(flask.url_for('login'))
     else:
         monitor.stop_monitor()
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         return_str = pages.w3_style + pages.style + draw_top_div()
         return_str += """
             <div class='main'>
@@ -1898,7 +1894,7 @@ def add_user():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if (flask.request.method == 'GET'):
             return_str = pages.w3_style + pages.style + draw_top_div()
             return_str += """
@@ -1968,7 +1964,7 @@ def edit_user():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if (flask.request.method == 'GET'):
             user_id = flask.request.args.get('table_id')
             return_str = pages.w3_style + pages.style + draw_top_div()
@@ -2102,7 +2098,7 @@ def delete_user():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         user_id = flask.request.args.get('user_id')
         database = "openplc.db"
         conn = create_connection(database)
@@ -2135,7 +2131,7 @@ def settings():
         return flask.redirect(flask.url_for('login'))
     else:
         monitor.stop_monitor()
-        if (zcplc_runtime.status() == "Compiling"): return draw_compiling_page()
+        if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         if (flask.request.method == 'GET'):
             return_str = pages.w3_style + pages.settings_style + draw_top_div() + pages.settings_head
             return_str += draw_status()
@@ -2158,7 +2154,7 @@ def settings():
                 return_str += """
                         <b>Change Hostname</b>
                         <br>
-                        <p>Hostname allows you to access the zcPLC Runtime dashboard from another computer on the same network using """ + device_hostname + """.local:8080</p>
+                        <p>Hostname allows you to access the OpenPLC Runtime dashboard from another computer on the same network using """ + device_hostname + """.local:8080</p>
                         <p>Changes to hostname will only take effect after a reboot</p>
                         <label for='device_hostname'>
                             <b>Hostname</b>
@@ -2308,7 +2304,7 @@ def settings():
                         <br>
                         <br>
                         <label class="container">
-                            <b>Start zcPLC in RUN mode</b>"""
+                            <b>Start OpenPLC in RUN mode</b>"""
                             
                     if (start_run == 'false'):
                         return_str += """
@@ -2442,15 +2438,6 @@ def logout():
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return 'Unauthorized'
-
-#----------------------------------------------------------------------------
-# Language switching route
-#----------------------------------------------------------------------------
-@app.route('/set_language/<language>')
-def set_language(language):
-    i18n.set_language(language)
-    # Redirect back to the referring page or dashboard
-    return flask.redirect(flask.request.referrer or flask.url_for('dashboard'))
     
 #----------------------------------------------------------------------------
 #Creates a connection with the SQLite database.
@@ -2507,7 +2494,7 @@ def main():
    print("Starting the web interface...")
    
 if __name__ == '__main__':
-    #Load information about current program on the zcplc_runtime object
+    #Load information about current program on the openplc_runtime object
     file = open("active_program", "r")
     st_file = file.read()
     st_file = st_file.replace('\r','').replace('\n','')
@@ -2520,9 +2507,9 @@ if __name__ == '__main__':
             cur.execute("SELECT * FROM Programs WHERE File=?", (st_file,))
             #cur.execute("SELECT * FROM Programs")
             row = cur.fetchone()
-            zcplc_runtime.project_name = str(row[1])
-            zcplc_runtime.project_description = str(row[2])
-            zcplc_runtime.project_file = str(row[3])
+            openplc_runtime.project_name = str(row[1])
+            openplc_runtime.project_description = str(row[2])
+            openplc_runtime.project_file = str(row[3])
             
             cur.execute("SELECT * FROM Settings")
             rows = cur.fetchall()
@@ -2534,11 +2521,11 @@ if __name__ == '__main__':
                     start_run = str(row[1])
                     
             if (start_run == 'true'):
-                print("Initializing zcPLC in RUN mode...")
-                zcplc_runtime.start_runtime()
+                print("Initializing OpenPLC in RUN mode...")
+                openplc_runtime.start_runtime()
                 time.sleep(1)
                 configure_runtime()
-                monitor.parse_st(zcplc_runtime.project_file)
+                monitor.parse_st(openplc_runtime.project_file)
             
             app.run(debug=False, host='0.0.0.0', threaded=True, port=8080)
         
