@@ -387,8 +387,8 @@ void *querySlaveDevices(void *arg)
                 }
             }
 
-            //Verify if device is connected
-            if (!mb_devices[i].isConnected && !rtu_port_connected)
+            //Verify if device is connected (for RTU with port sharing, use the shared connection)
+            if (!mb_devices[i].isConnected && !(mb_devices[i].protocol == MB_RTU && rtu_port_connected))
             {
                 sprintf(log_msg, "Device %s is disconnected. Attempting to reconnect...\n", mb_devices[i].dev_name);
                 log(log_msg);
@@ -414,8 +414,13 @@ void *querySlaveDevices(void *arg)
                     mb_devices[i].isConnected = true;
                 }
             }
-            if (mb_devices[i].isConnected || rtu_port_connected)
+            if (mb_devices[i].isConnected || (mb_devices[i].protocol == MB_RTU && rtu_port_connected))
             {
+                //Ensure correct slave ID is set for RTU devices sharing a port
+                if (mb_devices[i].protocol == MB_RTU && found_sharing)
+                {
+                    modbus_set_slave(mb_devices[i].mb_ctx, mb_devices[i].dev_id);
+                }
 
                 struct timespec ts;
                 ts.tv_sec = 0;
@@ -439,7 +444,7 @@ void *querySlaveDevices(void *arg)
                                                             mb_devices[i].discrete_inputs.num_regs, tempBuff);
                     if (return_val == -1)
                     {
-                        if (mb_devices[i].protocol != MB_RTU)
+                        if (mb_devices[i].protocol != MB_RTU || !found_sharing)
                         {
                             modbus_close(mb_devices[i].mb_ctx);
                             mb_devices[i].isConnected = false;
@@ -483,7 +488,7 @@ void *querySlaveDevices(void *arg)
                     int return_val = modbus_write_bits(mb_devices[i].mb_ctx, mb_devices[i].coils.start_address, mb_devices[i].coils.num_regs, tempBuff);
                     if (return_val == -1)
                     {
-                        if (mb_devices[i].protocol != MB_RTU)
+                        if (mb_devices[i].protocol != MB_RTU || !found_sharing)
                         {
                             modbus_close(mb_devices[i].mb_ctx);
                             mb_devices[i].isConnected = false;
@@ -508,7 +513,7 @@ void *querySlaveDevices(void *arg)
                                                                     mb_devices[i].input_registers.num_regs, tempBuff);
                     if (return_val == -1)
                     {
-                        if (mb_devices[i].protocol != MB_RTU)
+                        if (mb_devices[i].protocol != MB_RTU || !found_sharing)
                         {
                             modbus_close(mb_devices[i].mb_ctx);
                             mb_devices[i].isConnected = false;
@@ -544,7 +549,7 @@ void *querySlaveDevices(void *arg)
                                                            mb_devices[i].holding_read_registers.num_regs, tempBuff);
                     if (return_val == -1)
                     {
-                        if (mb_devices[i].protocol != MB_RTU)
+                        if (mb_devices[i].protocol != MB_RTU || !found_sharing)
                         {
                             modbus_close(mb_devices[i].mb_ctx);
                             mb_devices[i].isConnected = false;
@@ -588,7 +593,7 @@ void *querySlaveDevices(void *arg)
                                                             mb_devices[i].holding_registers.num_regs, tempBuff);
                     if (return_val == -1)
                     {
-                        if (mb_devices[i].protocol != MB_RTU)
+                        if (mb_devices[i].protocol != MB_RTU || !found_sharing)
                         {
                             modbus_close(mb_devices[i].mb_ctx);
                             mb_devices[i].isConnected = false;
