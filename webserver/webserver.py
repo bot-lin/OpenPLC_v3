@@ -17,6 +17,7 @@ import mimetypes
 
 import flask 
 import flask_login
+import translations
 
 app = flask.Flask(__name__)
 app.secret_key = str(os.urandom(16))
@@ -57,6 +58,126 @@ def is_allowed_file(file):
         return False
     except Exception:
         return False
+
+def get_current_language():
+    """Get current language from session, default to 'en'"""
+    return flask.session.get('language', 'en')
+
+def set_language(lang):
+    """Set language in session"""
+    if lang in translations.get_supported_languages():
+        flask.session['language'] = lang
+        flask.session.permanent = True
+
+def t(key):
+    """Translation helper function"""
+    return translations.get_translation(key, get_current_language())
+
+def generate_login_page():
+    """Generate localized login page"""
+    current_lang = get_current_language()
+    language_names = translations.get_language_names()
+    
+    # Language selector
+    lang_selector = "<div style='position:absolute; top:5px; right:10px; z-index:20;'>"
+    for lang_code, lang_name in language_names.items():
+        if lang_code == current_lang:
+            lang_selector += f"<span style='color:white; margin:0 5px; font-weight:bold;'>{lang_name}</span>"
+        else:
+            lang_selector += f"<a href='/set_language/{lang_code}' style='color:#ccc; margin:0 5px; text-decoration:none;'>{lang_name}</a>"
+    lang_selector += "</div>"
+    
+    login_page = f"""
+<!DOCTYPE html>
+<html>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+        .top {{
+            position:absolute;
+            left:0; right:0; top:0;
+            height: 50px;
+            background-color: #000000;
+            position: fixed;
+            overflow: hidden;
+            z-index: 10
+        }}
+       .main {{
+            position: absolute;
+            left:0px; top:50px; right:0; bottom:0;
+        }}
+        .login-page {{
+          width: 360px;
+          padding: 4% 0 0;
+          margin: auto;
+        }}
+        .form {{
+          position: relative;
+          z-index: 1;
+          background: #FFFFFF;
+          max-width: 360px;
+          margin: 0 auto 10px;
+          padding: 45px;
+          text-align: center;
+          box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }}
+        .form input {{
+          font-family: 'Roboto', sans-serif;
+          outline: 0;
+          background: #f2f2f2;
+          width: 100%;
+          border: 0;
+          margin: 0 0 15px;
+          padding: 15px;
+          box-sizing: border-box;
+          font-size: 14px;
+        }}
+        .form button {{
+          font-family: 'Roboto', sans-serif;
+          text-transform: uppercase;
+          outline: 0;
+          background: #0066fc;
+          width: 100%;
+          border: 0;
+          padding: 15px;
+          color: #FFFFFF;
+          font-size: 14px;
+          -webkit-transition: all 0.3 ease;
+          transition: all 0.3 ease;
+          cursor: pointer;
+        }}
+        .form button:hover,.form button:active,.form button:focus {{
+          background: #43A047;
+        }}
+        body {{
+          background: -webkit-linear-gradient(right, #25c481, #25b7c4);
+          background: linear-gradient(to left, #25c481, #25b7c4);
+          font-family: 'Roboto', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }}
+    </style>
+    <body>
+        <div class='top'>
+            {lang_selector}
+            <img src="/static/logo-zcplc.png" alt="zcPLC" style="width:63px;height:50px;padding:0px 0px 0px 10px;float:left">
+            <h3 style="font-family:'Roboto', sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px"><center>{t('zcplc_webserver')}</center></h3>
+        </div>
+        <div class='main'>
+            <div class='login-page'>
+              <div class='form'>
+                <form action='login' method='POST' class='login-form'>
+                    <h3 style="font-family:'Roboto', sans-serif; font-size:24px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px"><center><b>{t('welcome_to_zcplc')}</b></center></h3>
+                  <input type="text" name="username" placeholder="{t('username')}"/>
+                  <input type="password" name="password" placeholder="{t('password')}"/>
+                  <button type="submit">{t('login')}</button>
+                </form>
+              </div>
+            </div>
+        </div>
+    </body>
+</html>
+"""
+    return login_page
 
 def configure_runtime():
     global openplc_runtime
@@ -203,15 +324,27 @@ def generate_mbconfig():
     
 def draw_top_div():
     global openplc_runtime
-    top_div = ("<div class='top'>"
-    "<img src='/static/logo-openplc.png' alt='OpenPLC' style='width:63px;height:50px;padding:0px 0px 0px 10px;float:left'>")
+    current_lang = get_current_language()
+    language_names = translations.get_language_names()
+    
+    # Language selector
+    lang_selector = "<div style='position:absolute; top:5px; right:10px; z-index:20;'>"
+    for lang_code, lang_name in language_names.items():
+        if lang_code == current_lang:
+            lang_selector += f"<span style='color:white; margin:0 5px; font-weight:bold;'>{lang_name}</span>"
+        else:
+            lang_selector += f"<a href='/set_language/{lang_code}' style='color:#ccc; margin:0 5px; text-decoration:none;'>{lang_name}</a>"
+    lang_selector += "</div>"
+    
+    top_div = ("<div class='top'>" + lang_selector +
+    "<img src='/static/logo-zcplc.png' alt='zcPLC' style='width:63px;height:50px;padding:0px 0px 0px 10px;float:left'>")
     
     if (openplc_runtime.status() == "Running"):
-        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: #02EE07'>Running: </span>" + openplc_runtime.project_name + "</center></h3>"
+        top_div += f"<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: #02EE07'>{t('running')}: </span>" + openplc_runtime.project_name + "</center></h3>"
     elif (openplc_runtime.status() == "Compiling"):
-        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Yellow'>Compiling: </span>" + openplc_runtime.project_name + "</center></h3>"
+        top_div += f"<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Yellow'>{t('compiling')}: </span>" + openplc_runtime.project_name + "</center></h3>"
     else:
-        top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Red'>Stopped: </span>" + openplc_runtime.project_name + "</center></h3>"
+        top_div += f"<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: Red'>{t('stopped')}: </span>" + openplc_runtime.project_name + "</center></h3>"
     
     top_div += "<div class='user'><img src='"
     if (flask_login.current_user.pict_file == "None"):
@@ -459,11 +592,17 @@ def index():
     else:
         return flask.redirect(flask.url_for('login'))
 
+@app.route('/set_language/<lang>')
+def set_language_route(lang):
+    """Route to set language"""
+    set_language(lang)
+    # Redirect back to the previous page or to home
+    return flask.redirect(flask.request.referrer or flask.url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if flask.request.method == 'GET':
-        return pages.login_head + pages.login_body
+        return generate_login_page()
 
     username = flask.request.form['username']
     password = flask.request.form['password']
@@ -611,16 +750,16 @@ def programs():
                     <br>
                     <br>"""
         return_str += draw_status()
-        return_str += """
+        return_str += f"""
         </div>
             <div style="margin-left:320px; margin-right:70px">
                 <div style="w3-container">
                     <br>
-                    <h2>Programs</h2>
-                    <p>Here you can upload a new program to OpenPLC or revert back to a previous uploaded program shown on the table.</p>
+                    <h2>{t('programs')}</h2>
+                    <p>{t('upload_program')}</p>
                     <table>
                         <tr style='background-color: white'>
-                            <th>Program Name</th><th>File</th><th>Date Uploaded</th>
+                            <th>{t('program_name')}</th><th>{t('file')}</th><th>{t('date_uploaded')}</th>
                         </tr>"""
         database = "openplc.db"
         conn = create_connection(database)
@@ -1023,7 +1162,7 @@ def modbus():
                 <div style="w3-container">
                     <br>
                     <h2>Slave Devices</h2>
-                    <p>List of Slave devices attached to OpenPLC.</p>
+                    <p>List of Slave devices attached to zcPLC.</p>
                     <p><b>Attention:</b> Slave devices are attached to address 100 onward (i.e. %IX100.0, %IW100, %QX100.0, and %QW100)
                     <table>
                         <tr style='background-color: white'>
@@ -1741,9 +1880,9 @@ def hardware():
                 <div style="w3-container">
                     <br>
                     <h2>Hardware</h2>
-                    <p>OpenPLC controls inputs and outputs through a piece of code called hardware layer (also known as driver). Therefore, to properly handle the inputs and outputs of your board, you must select the appropriate hardware layer for it. The Blank hardware layer is the default option on OpenPLC, which provides no support for native inputs and outputs.</p>
+                    <p>zcPLC controls inputs and outputs through a piece of code called hardware layer (also known as driver). Therefore, to properly handle the inputs and outputs of your board, you must select the appropriate hardware layer for it. The Blank hardware layer is the default option on zcPLC, which provides no support for native inputs and outputs.</p>
                     <!-- <p>This section allows you to change the hardware layer used by OpenPLC. It is also possible to augment the current hardware layer through the hardware layer code box. -->
-                    <p><b>OpenPLC Hardware Layer</b><p>
+                    <p><b>zcPLC Hardware Layer</b><p>
                     <form   id    = "uploadForm"
                         enctype   =  "multipart/form-data"
                         action    =  "hardware"
@@ -1790,8 +1929,8 @@ def hardware():
                         <br>
                         <br>
                         <div id="psm_code" style="visibility:hidden">
-                            <p><b>OpenPLC Python SubModule (PSM)</b><p>
-                            <p>PSM is a powerful bridge that connects OpenPLC core to Python. You can use PSM to write your own OpenPLC driver in pure Python. See below for a sample driver that switches %IX0.0 every second</p>
+                            <p><b>zcPLC Python SubModule (PSM)</b><p>
+                            <p>PSM is a powerful bridge that connects zcPLC core to Python. You can use PSM to write your own zcPLC driver in pure Python. See below for a sample driver that switches %IX0.0 every second</p>
                             <textarea wrap="off" spellcheck="false" name="custom_layer_code" id="custom_layer_code">"""
             with open('./core/psm/main.py') as f: return_str += f.read()
             return_str += pages.hardware_tail
@@ -2154,7 +2293,7 @@ def settings():
                 return_str += """
                         <b>Change Hostname</b>
                         <br>
-                        <p>Hostname allows you to access the OpenPLC Runtime dashboard from another computer on the same network using """ + device_hostname + """.local:8080</p>
+                        <p>Hostname allows you to access the zcPLC Runtime dashboard from another computer on the same network using """ + device_hostname + """.local:8080</p>
                         <p>Changes to hostname will only take effect after a reboot</p>
                         <label for='device_hostname'>
                             <b>Hostname</b>
@@ -2304,7 +2443,7 @@ def settings():
                         <br>
                         <br>
                         <label class="container">
-                            <b>Start OpenPLC in RUN mode</b>"""
+                            <b>Start zcPLC in RUN mode</b>"""
                             
                     if (start_run == 'false'):
                         return_str += """
