@@ -1,6 +1,6 @@
 char md5[] = "b1a8c0845d49d1bc43ac3b252b41788d";
 /*
- * This file is part of zcPLC Runtime
+ * This file is part of OpenPLC Runtime
  *
  * Copyright (C) 2023 Autonomy, GP Orcullo
  * Based on the work by GP Orcullo on Beremiz for uC
