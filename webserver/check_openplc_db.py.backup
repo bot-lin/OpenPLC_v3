@@ -10,7 +10,7 @@ from sqlite3 import Error
 import os
 
 builddir = r"build/"
-dbfile = r"build/zcplc.db"
+dbfile = r"build/openplc.db"
 
 createTablePrograms = r"""CREATE TABLE `Programs` (
     `Prog_ID`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
