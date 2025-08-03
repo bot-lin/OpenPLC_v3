@@ -60,7 +60,7 @@ def is_allowed_file(file):
 
 def configure_runtime():
     global openplc_runtime
-    database = "zcplc.db"
+    database = "openplc.db"
     conn = create_connection(database)
     if (conn != None):
         try:
@@ -121,7 +121,7 @@ def delete_persistent_file():
 
 
 def generate_mbconfig():
-    database = "zcplc.db"
+    database = "openplc.db"
     conn = create_connection(database)
     if (conn != None):
         try:
@@ -204,7 +204,7 @@ def generate_mbconfig():
 def draw_top_div():
     global openplc_runtime
     top_div = ("<div class='top'>"
-    "<img src='/static/logo-zcplc.png' alt='zcPLC' style='width:63px;height:50px;padding:0px 0px 0px 10px;float:left'>")
+    "<img src='/static/logo-openplc.png' alt='OpenPLC' style='width:63px;height:50px;padding:0px 0px 0px 10px;float:left'>")
     
     if (openplc_runtime.status() == "Running"):
         top_div += "<h3 style='font-family:\"Roboto\", sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px'><center><span style='color: #02EE07'>Running: </span>" + openplc_runtime.project_name + "</center></h3>"
@@ -389,7 +389,7 @@ loading logs...
     
 @login_manager.user_loader
 def user_loader(username):
-    database = "zcplc.db"
+    database = "openplc.db"
     conn = create_connection(database)
     if (conn != None):
         try:
@@ -419,7 +419,7 @@ def user_loader(username):
 def request_loader(request):
     username = request.form.get('username')
     
-    database = "zcplc.db"
+    database = "openplc.db"
     conn = create_connection(database)
     if (conn != None):
         try:
@@ -468,7 +468,7 @@ def login():
     username = flask.request.form['username']
     password = flask.request.form['password']
     
-    database = "zcplc.db"
+    database = "openplc.db"
     conn = create_connection(database)
     if (conn != None):
         try:
@@ -617,12 +617,12 @@ def programs():
                 <div style="w3-container">
                     <br>
                     <h2>Programs</h2>
-                    <p>Here you can upload a new program to zcPLC or revert back to a previous uploaded program shown on the table.</p>
+                    <p>Here you can upload a new program to OpenPLC or revert back to a previous uploaded program shown on the table.</p>
                     <table>
                         <tr style='background-color: white'>
                             <th>Program Name</th><th>File</th><th>Date Uploaded</th>
                         </tr>"""
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -660,9 +660,9 @@ def programs():
 </html>"""
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
         
         return return_str
 
@@ -698,7 +698,7 @@ def reload_program():
                     <br>
                     <h2>Program Info</h2>
                     <br>"""
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -721,9 +721,9 @@ def reload_program():
 
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
         
         return return_str
         
@@ -793,7 +793,7 @@ def update_program_action():
         prog_id = flask.request.form['prog_id']
         epoch_time = flask.request.form['epoch_time']
         
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -810,9 +810,9 @@ def update_program_action():
                 
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
 
 @app.route('/remove-program', methods=['GET', 'POST'])
@@ -822,7 +822,7 @@ def remove_program():
     else:
         if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         prog_id = flask.request.args.get('id')
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -835,9 +835,9 @@ def remove_program():
                 
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
 
 @app.route('/upload-program', methods=['GET', 'POST'])
@@ -933,7 +933,7 @@ def upload_program_action():
 
         (prog_name, prog_descr, prog_file, epoch_time) = sanitize_input(prog_name, prog_descr, prog_file, epoch_time)
         
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -947,9 +947,9 @@ def upload_program_action():
             
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
         
 
 @app.route('/compile-program', methods=['GET', 'POST'])
@@ -962,7 +962,7 @@ def compile_program():
         st_file = flask.request.args.get('file')
         
         #load information about the program being compiled into the openplc_runtime object
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -1023,13 +1023,13 @@ def modbus():
                 <div style="w3-container">
                     <br>
                     <h2>Slave Devices</h2>
-                    <p>List of Slave devices attached to zcPLC.</p>
+                    <p>List of Slave devices attached to OpenPLC.</p>
                     <p><b>Attention:</b> Slave devices are attached to address 100 onward (i.e. %IX100.0, %IW100, %QX100.0, and %QW100)
                     <table>
                         <tr style='background-color: white'>
                             <th>Device Name</th><th>Device Type</th><th>DI</th><th>DO</th><th>AI</th><th>AO</th>
                         </tr>"""
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -1094,9 +1094,9 @@ def modbus():
 
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
         
         return return_str
         
@@ -1200,7 +1200,7 @@ def add_modbus_device():
             (devname, devtype, devid, devcport, devbaud, devparity, devdata, devstop, devpause, devip, devport, di_start, di_size, do_start, do_size, ai_start, ai_size, aor_start, aor_size, aow_start, aow_size) \
                 = sanitize_input(devname, devtype, devid, devcport, devbaud, devparity, devdata, devstop, devpause, devip, devport, di_start, di_size, do_start, do_size, ai_start, ai_size, aor_start, aor_size, aow_start, aow_size)
 
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -1215,9 +1215,9 @@ def add_modbus_device():
                     
                 except Error as e:
                     print("error connecting to the database" + str(e))
-                    return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                    return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
             else:
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
 
 @app.route('/modbus-edit-device', methods=['GET', 'POST'])
@@ -1259,7 +1259,7 @@ def modbus_edit_device():
                             method    =  "post"
                             onsubmit  =  "return validateForm()">"""
                             
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -1341,9 +1341,9 @@ def modbus_edit_device():
                     
                 except Error as e:
                     print("error connecting to the database" + str(e))
-                    return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                    return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
             else:
-                return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+                return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
             
             return return_str
             
@@ -1375,7 +1375,7 @@ def modbus_edit_device():
             (devname, devtype, devid, devcport, devbaud, devparity, devdata, devstop, devpause, devip, devport, di_start, di_size, do_start, do_size, ai_start, ai_size, aor_start, aor_size, aow_start, aow_size, devid_db) \
                 = sanitize_input(devname, devtype, devid, devcport, devbaud, devparity, devdata, devstop, devpause, devip, devport, di_start, di_size, do_start, do_size, ai_start, ai_size, aor_start, aor_size, aow_start, aow_size, devid_db)
 
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -1390,9 +1390,9 @@ def modbus_edit_device():
                     
                 except Error as e:
                     print("error connecting to the database" + str(e))
-                    return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                    return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
             else:
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
 
 @app.route('/delete-device', methods=['GET', 'POST'])
@@ -1402,7 +1402,7 @@ def delete_device():
     else:
         if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         devid_db = flask.request.args.get('dev_id')
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -1415,9 +1415,9 @@ def delete_device():
                 return flask.redirect(flask.url_for('modbus'))
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
             
 @app.route('/monitoring', methods=['GET', 'POST'])
@@ -1466,7 +1466,7 @@ def monitoring():
             #Check Modbus Server status
             modbus_enabled = False
             modbus_port_cfg = 502
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -1556,7 +1556,7 @@ def monitor_update():
     if (flask_login.current_user.is_authenticated == False):
         return flask.redirect(flask.url_for('login'))
     else:
-        #if (openplc_runtime.status() == "Compiling"): return 'zcPLC is compiling new code. Please wait'
+        #if (openplc_runtime.status() == "Compiling"): return 'OpenPLC is compiling new code. Please wait'
         return_str = """
                         <table>
                             <col width="50"><col width="10"><col width="10"><col width="10"><col width="100">
@@ -1741,9 +1741,9 @@ def hardware():
                 <div style="w3-container">
                     <br>
                     <h2>Hardware</h2>
-                    <p>zcPLC controls inputs and outputs through a piece of code called hardware layer (also known as driver). Therefore, to properly handle the inputs and outputs of your board, you must select the appropriate hardware layer for it. The Blank hardware layer is the default option on zcPLC, which provides no support for native inputs and outputs.</p>
-                    <!-- <p>This section allows you to change the hardware layer used by zcPLC. It is also possible to augment the current hardware layer through the hardware layer code box. -->
-                    <p><b>zcPLC Hardware Layer</b><p>
+                    <p>OpenPLC controls inputs and outputs through a piece of code called hardware layer (also known as driver). Therefore, to properly handle the inputs and outputs of your board, you must select the appropriate hardware layer for it. The Blank hardware layer is the default option on OpenPLC, which provides no support for native inputs and outputs.</p>
+                    <!-- <p>This section allows you to change the hardware layer used by OpenPLC. It is also possible to augment the current hardware layer through the hardware layer code box. -->
+                    <p><b>OpenPLC Hardware Layer</b><p>
                     <form   id    = "uploadForm"
                         enctype   =  "multipart/form-data"
                         action    =  "hardware"
@@ -1790,8 +1790,8 @@ def hardware():
                         <br>
                         <br>
                         <div id="psm_code" style="visibility:hidden">
-                            <p><b>zcPLC Python SubModule (PSM)</b><p>
-                            <p>PSM is a powerful bridge that connects zcPLC core to Python. You can use PSM to write your own zcPLC driver in pure Python. See below for a sample driver that switches %IX0.0 every second</p>
+                            <p><b>OpenPLC Python SubModule (PSM)</b><p>
+                            <p>PSM is a powerful bridge that connects OpenPLC core to Python. You can use PSM to write your own OpenPLC driver in pure Python. See below for a sample driver that switches %IX0.0 every second</p>
                             <textarea wrap="off" spellcheck="false" name="custom_layer_code" id="custom_layer_code">"""
             with open('./core/psm/main.py') as f: return_str += f.read()
             return_str += pages.hardware_tail
@@ -1857,7 +1857,7 @@ def users():
                             <th>Full Name</th><th>Username</th><th>Email</th>
                         </tr>"""
         
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -1882,9 +1882,9 @@ def users():
 </html>"""
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
         
         return return_str
 
@@ -1927,7 +1927,7 @@ def add_user():
             if ('file' not in flask.request.files):
                 form_has_picture = False
             
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -1954,9 +1954,9 @@ def add_user():
                     
                 except Error as e:
                     print("error connecting to the database" + str(e))
-                    return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                    return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
             else:
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
 
 @app.route('/edit-user', methods=['GET', 'POST'])
@@ -1997,7 +1997,7 @@ def edit_user():
                             method    =  "post"
                             onsubmit  =  "return validateForm()">"""
                         
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -2043,9 +2043,9 @@ def edit_user():
 </html>"""
                 except Error as e:
                     print("error connecting to the database" + str(e))
-                    return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                    return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
             else:
-                return_str += 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+                return_str += 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
             
             return return_str
             
@@ -2060,7 +2060,7 @@ def edit_user():
             if ('file' not in flask.request.files):
                 form_has_picture = False
             
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -2088,9 +2088,9 @@ def edit_user():
                     
                 except Error as e:
                     print("error connecting to the database" + str(e))
-                    return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                    return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
             else:
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
 
 @app.route('/delete-user', methods=['GET', 'POST'])
@@ -2100,7 +2100,7 @@ def delete_user():
     else:
         if (openplc_runtime.status() == "Compiling"): return draw_compiling_page()
         user_id = flask.request.args.get('user_id')
-        database = "zcplc.db"
+        database = "openplc.db"
         conn = create_connection(database)
         if (conn != None):
             try:
@@ -2120,9 +2120,9 @@ def delete_user():
                     return flask.redirect(flask.url_for('users'))
             except Error as e:
                 print("error connecting to the database" + str(e))
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
         else:
-            return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+            return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -2154,7 +2154,7 @@ def settings():
                 return_str += """
                         <b>Change Hostname</b>
                         <br>
-                        <p>Hostname allows you to access the zcPLC Runtime dashboard from another computer on the same network using """ + device_hostname + """.local:8080</p>
+                        <p>Hostname allows you to access the OpenPLC Runtime dashboard from another computer on the same network using """ + device_hostname + """.local:8080</p>
                         <p>Changes to hostname will only take effect after a reboot</p>
                         <label for='device_hostname'>
                             <b>Hostname</b>
@@ -2170,7 +2170,7 @@ def settings():
                         <label class="container">
                             <b>Enable Modbus Server</b>"""
             
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -2304,7 +2304,7 @@ def settings():
                         <br>
                         <br>
                         <label class="container">
-                            <b>Start zcPLC in RUN mode</b>"""
+                            <b>Start OpenPLC in RUN mode</b>"""
                             
                     if (start_run == 'false'):
                         return_str += """
@@ -2359,7 +2359,7 @@ def settings():
             if current_hostname != None and current_hostname != device_hostname:
                 subprocess.run(['hostnamectl', 'set-hostname', device_hostname])
 
-            database = "zcplc.db"
+            database = "openplc.db"
             conn = create_connection(database)
             if (conn != None):
                 try:
@@ -2420,9 +2420,9 @@ def settings():
                     
                 except Error as e:
                     print("error connecting to the database" + str(e))
-                    return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.<br><br>Error: ' + str(e)
+                    return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.<br><br>Error: ' + str(e)
             else:
-                return 'Error connecting to the database. Make sure that your zcplc.db file is not corrupt.'
+                return 'Error connecting to the database. Make sure that your openplc.db file is not corrupt.'
         
 
 @app.route('/logout')
@@ -2499,7 +2499,7 @@ if __name__ == '__main__':
     st_file = file.read()
     st_file = st_file.replace('\r','').replace('\n','')
     
-    database = "zcplc.db"
+    database = "openplc.db"
     conn = create_connection(database)
     if (conn != None):
         try:
@@ -2521,7 +2521,7 @@ if __name__ == '__main__':
                     start_run = str(row[1])
                     
             if (start_run == 'true'):
-                print("Initializing zcPLC in RUN mode...")
+                print("Initializing OpenPLC in RUN mode...")
                 openplc_runtime.start_runtime()
                 time.sleep(1)
                 configure_runtime()
