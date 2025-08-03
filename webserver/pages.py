@@ -117,14 +117,14 @@ login_head = """
     </style>
     <body>
         <div class='top'>
-            <img src="/static/logo-zcplc.png" alt="zcPLC" style="width:63px;height:50px;padding:0px 0px 0px 10px;float:left">
-            <h3 style=\"font-family:'Roboto', sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px\"><center>zcPLC Webserver</center></h3>
+            <img src="/static/logo-openplc.png" alt="OpenPLC" style="width:63px;height:50px;padding:0px 0px 0px 10px;float:left">
+            <h3 style=\"font-family:'Roboto', sans-serif; font-size:18px; color:white; padding:13px 111px 0px 0px; margin: 0px 0px 0px 0px\"><center>OpenPLC Webserver</center></h3>
         </div>
         <div class='main'>
             <div class='login-page'>
               <div class='form'>
                 <form action='login' method='POST' class='login-form'>
-                    <h3 style=\"font-family:'Roboto', sans-serif; font-size:24px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px\"><center><b>Welcome to zcPLC</b></center></h3>"""
+                    <h3 style=\"font-family:'Roboto', sans-serif; font-size:24px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px\"><center><b>Welcome to OpenPLC</b></center></h3>"""
 
 login_body = """
                     <h3 style=\"font-family:'Roboto', sans-serif; font-size:14px; color:#1F1F1F; padding:0px 0px 0px 0px; margin: 0px 0px 40px 0px\"><center>Use your credentials to login</center></h3>
